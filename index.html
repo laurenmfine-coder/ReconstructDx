@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReconstructDx — Patient Decision Aid</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ── HEADER ─────────────────────────────────────────────────────── -->
+  <header class="site-header" id="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-mark">Rx</span>
+        <span class="logo-text">ReconstructDx</span>
+      </div>
+      <nav class="progress-nav" id="progress-nav" aria-label="Tool progress" style="display:none">
+        <div class="progress-steps" id="progress-steps"></div>
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill"></div></div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── MAIN APP ───────────────────────────────────────────────────── -->
+  <main id="app" role="main"></main>
+
+  <!-- ── SUPPORT BUTTON ─────────────────────────────────────────────── -->
+  <button class="support-btn" id="support-btn" aria-label="Get support resources" onclick="toggleSupport()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg>
+    Support
+  </button>
+
+  <!-- ── SUPPORT PANEL ──────────────────────────────────────────────── -->
+  <div class="support-panel" id="support-panel" role="dialog" aria-modal="true" aria-label="Support resources" hidden>
+    <button class="support-close" onclick="toggleSupport()" aria-label="Close support panel">&times;</button>
+    <h3>You're not alone</h3>
+    <p>Making medical decisions can feel overwhelming. Here are some resources that may help.</p>
+    <ul>
+      <li><strong>988 Suicide &amp; Crisis Lifeline</strong><br>Call or text <a href="tel:988">988</a> — available 24/7</li>
+      <li><strong>Crisis Text Line</strong><br>Text HOME to <a href="sms:741741">741741</a></li>
+      <li><strong>SAMHSA Helpline</strong><br><a href="tel:18006624357">1-800-662-4357</a> — mental health &amp; substance use</li>
+    </ul>
+    <p class="support-note">This tool is not a substitute for professional support. Please speak with your care team or a counselor if you are struggling.</p>
+  </div>
+  <div class="support-overlay" id="support-overlay" onclick="toggleSupport()" hidden></div>
+
+  <!-- ── PRINT OVERLAY ──────────────────────────────────────────────── -->
+  <div id="print-area" class="print-area" hidden></div>
+
+  <!-- ── SCRIPTS ────────────────────────────────────────────────────── -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
