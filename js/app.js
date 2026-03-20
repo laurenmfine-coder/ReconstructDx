@@ -63,6 +63,7 @@ function renderStep(step) {
 function el(tag, attrs = {}, ...children) {
   const e = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
+    if (v === null || v === undefined) continue;
     if (k === "class") e.className = v;
     else if (k === "html") e.innerHTML = v;
     else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
@@ -87,6 +88,7 @@ function btn(label, cls, onClick, attrs = {}) {
 }
 
 function screen(cls, ...children) {
+  app.innerHTML = "";
   const s = div(`screen ${cls}`, ...children);
   app.appendChild(s);
 }
@@ -152,10 +154,11 @@ function renderCheckin() {
 
     ...PHQ_QUESTIONS.map((q, qi) => {
       const optEls = PHQ_OPTIONS.map((opt, oi) => {
-        const optDiv = div("phq-opt" + (State.phqAnswers[qi] === oi ? " selected" : ""), opt);
+        const isSelected = State.phqAnswers.hasOwnProperty(qi) && State.phqAnswers[qi] === oi;
+        const optDiv = div("phq-opt" + (isSelected ? " selected" : ""), opt);
         optDiv.addEventListener("click", () => {
           State.phqAnswers[qi] = oi;
-          renderCheckin();
+          renderStep(1);
         });
         return optDiv;
       });
@@ -229,7 +232,7 @@ function renderModuleSelect() {
           State.selectedModule = mod;
           State.valueRatings = {};
           State.topValues = [];
-          renderModuleSelect();
+          renderStep(2);
         });
         return card;
       })
@@ -321,7 +324,7 @@ function renderValues() {
             }, label);
             ratingBtn.addEventListener("click", () => {
               State.valueRatings[domain.id] = i + 1;
-              renderValues();
+              renderStep(4);
             });
             return ratingBtn;
           })
