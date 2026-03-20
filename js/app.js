@@ -101,9 +101,23 @@ function updateProgress() {
   const s = State.step;
   if (s === 0) { progressNav.style.display = "none"; return; }
   progressNav.style.display = "block";
-  progressSteps.innerHTML = RDX.steps.map((label, i) =>
-    `<span class="progress-step ${i < s ? "done" : i === s ? "active" : ""}">${label}</span>`
-  ).join("");
+  progressSteps.innerHTML = "";
+  RDX.steps.forEach((label, i) => {
+    const cls = i < s ? "done" : i === s ? "active" : "";
+    const span = document.createElement("span");
+    span.className = "progress-step " + cls;
+    span.textContent = label;
+    // Allow clicking on completed steps to go back, active step stays
+    if (i < s && i > 0) {
+      span.classList.add("clickable");
+      span.setAttribute("role", "button");
+      span.setAttribute("tabindex", "0");
+      span.setAttribute("aria-label", "Go back to " + label);
+      span.addEventListener("click", () => goTo(i));
+      span.addEventListener("keydown", e => { if(e.key==="Enter"||e.key===" ") goTo(i); });
+    }
+    progressSteps.appendChild(span);
+  });
   progressFill.style.width = Math.round((s / (RDX.steps.length - 1)) * 100) + "%";
 }
 
@@ -281,7 +295,11 @@ function renderHome() {
       div("home-cta-row",
         btn("Start the tool →","btn btn-primary btn-lg",()=>goTo(0)),
         btn("For clinicians →","btn btn-secondary",showClinicians)
-      )
+      ),
+      el("p",{class:"text-center mt-24",style:"color:rgba(255,255,255,.6);font-size:13px"},
+        "Also explore:  "),
+      el("a",{href:"aesthetics/",class:"btn btn-secondary",style:"margin-top:8px;display:inline-flex"},
+        "✨ DermDecide — Aesthetic Dermatology Decisions")
     )
   );
 }
@@ -557,6 +575,7 @@ function renderModuleSelect() {
 }
 
 function renderLearn() {
+  if (!State.selectedModule) { goTo(2); return; }
   const mod = State.selectedModule;
   screen("",
     eyebrow("Step 3 of 5 — "+mod.title),
@@ -605,6 +624,7 @@ function optionCard(opt) {
 }
 
 function renderValues() {
+  if (!State.selectedModule) { goTo(2); return; }
   const mod     = State.selectedModule;
   const domains = mod.valueDomains.map(id=>({id,...RDX.valueDomains[id]}));
   const labels  = ["Not important","Slightly important","Somewhat important","Very important","Extremely important"];
@@ -657,6 +677,8 @@ function submitValues() {
 }
 
 function renderCompare() {
+  if (!State.selectedModule) { goTo(2); return; }
+  if (!State.topValues || State.topValues.length === 0) { goTo(4); return; }
   const mod       = State.selectedModule;
   const crosswalk = RDX.crosswalk[mod.id]||{};
   const domains   = mod.valueDomains.map(id=>({id,...RDX.valueDomains[id]}));
@@ -701,7 +723,46 @@ function renderCompare() {
   );
 }
 
+
+function renderResources(moduleId) {
+  const resources = RDX.resources?.[moduleId];
+  if (!resources || resources.length === 0) return null;
+
+  const typeLabels = {
+    primary:   { label: "📚 Learn more",     cls: "res-primary"  },
+    support:   { label: "🤝 Support",         cls: "res-support"  },
+    insurance: { label: "📋 Insurance rights",cls: "res-insurance"},
+    findcare:  { label: "🔍 Find a specialist",cls: "res-findcare" }
+  };
+
+  const cards = resources.map(r => {
+    const meta = typeLabels[r.type] || typeLabels.primary;
+    const card = div("resource-card",
+      div("resource-card-top",
+        el("span", {class: "resource-type " + meta.cls}, meta.label),
+        el("strong", {class: "resource-org"}, r.org)
+      ),
+      el("p", {class: "resource-desc"}, r.desc),
+      el("a", {
+        class: "resource-link",
+        href: r.url,
+        target: "_blank",
+        rel: "noopener noreferrer"
+      }, "Visit website →")
+    );
+    return card;
+  });
+
+  return div("summary-section",
+    el("h3", {}, "Trusted resources"),
+    el("p", {class: "resource-intro"}, "These organizations provide reliable, evidence-based information. None of them are affiliated with this tool — we include them because they are the most trusted sources in their area."),
+    div("resources-grid", ...cards)
+  );
+}
+
 function renderSummary() {
+  // Guard: if no module selected, send back to module select
+  if (!State.selectedModule) { goTo(2); return; }
   const mod   = State.selectedModule;
   const today = new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
   const ratingLabels = ["","Not important","Slightly important","Somewhat important","Very important","Extremely important"];
@@ -725,18 +786,18 @@ function renderSummary() {
     div("summary-section",
       el("h3",{},"What matters most to you"),
       p("Your top 3 priorities:"),
-      div("",...State.topValues.map((id,i)=>{
+      State.topValues.length > 0 ? div("",...State.topValues.map((id,i)=>{
         const d=RDX.valueDomains[id];
         return d?el("span",{class:"value-pill"},`${i+1}. ${d.icon} ${d.label}`):null;
-      }).filter(Boolean)),
-      el("br"),
-      p("All ratings:"),
-      el("ul",{class:"question-list"},
+      }).filter(Boolean)) : p("You have not rated your values yet. Go back to complete Step 4."),
+      Object.keys(State.valueRatings).length > 0 ? el("br") : null,
+      Object.keys(State.valueRatings).length > 0 ? p("All ratings:") : null,
+      Object.keys(State.valueRatings).length > 0 ? el("ul",{class:"question-list"},
         ...Object.entries(State.valueRatings).sort((a,b)=>b[1]-a[1]).map(([id,rating])=>{
           const d=RDX.valueDomains[id];
           return el("li",{},`${d?.icon||""} ${d?.label||id} — ${ratingLabels[rating]}`);
         })
-      )
+      ) : null
     ),
     div("summary-section",
       el("h3",{},"Your options at a glance"),
@@ -760,8 +821,9 @@ function renderSummary() {
       el("h3",{},"Questions to ask your surgeon"),
       el("ul",{class:"question-list"},...mod.questions.map(q=>el("li",{},q)))
     ),
+    renderResources(mod.id),
     div(State.phqFlagged?"summary-section card-warn":"summary-section",
-      el("h3",{},"Support resources"),
+      el("h3",{},"Crisis & mental health support"),
       State.phqFlagged
         ? p("<strong>Based on your check-in, you may benefit from additional support.</strong> Many people find that talking with a counselor before a major medical decision is helpful.")
         : p("Making medical decisions can be stressful. Support is always available."),
