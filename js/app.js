@@ -120,6 +120,7 @@ function el(tag, attrs={}, ...children) {
     if (k==="class") e.className=v;
     else if (k==="html") e.innerHTML=v;
     else if (k.startsWith("on")) e.addEventListener(k.slice(2),v);
+    else if (k==="disabled") { if(v!=="") e.disabled=!!v; else e.disabled=true; }
     else e.setAttribute(k,v);
   }
   for (const child of children) {
@@ -488,7 +489,7 @@ function renderCheckin() {
     div("btn-row",
       btn("← Back","btn btn-secondary",()=>goTo(0)),
       btn("Continue →","btn btn-primary",submitCheckin,
-        {disabled:Object.keys(State.phqAnswers).length<4?"":null})
+        {disabled:Object.keys(State.phqAnswers).length<4?true:null})
     )
   );
 }
@@ -550,7 +551,7 @@ function renderModuleSelect() {
     ) : null,
     div("btn-row",
       btn("← Back","btn btn-secondary",()=>goTo(1)),
-      btn("Continue →","btn btn-primary",()=>goTo(3),{disabled:!State.selectedModule?"":null})
+      btn("Continue →","btn btn-primary",()=>goTo(3),{disabled:!State.selectedModule?true:null})
     )
   );
 }
@@ -644,7 +645,7 @@ function renderValues() {
     div("btn-row",
       btn("← Back","btn btn-secondary",()=>goTo(3)),
       btn("Continue →","btn btn-primary",submitValues,
-        {disabled:answered<domains.length?"":null})
+        {disabled:answered<domains.length?true:null})
     )
   );
 }
