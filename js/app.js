@@ -266,6 +266,16 @@ function renderHome() {
           card.addEventListener("click",()=>{ State.selectedModule=mod; goTo(0); });
           return card;
         })
+      ),
+      div("dermdecide-banner",
+        div("dermdecide-banner-left",
+          el("span",{class:"dermdecide-icon"},"✨"),
+          div("",
+            el("strong",{},"Also explore: DermDecide"),
+            el("span",{},"Aesthetic dermatology decision support — neurotoxins, melasma, acne treatment pathways")
+          )
+        ),
+        el("a",{href:"aesthetics/",class:"btn btn-secondary btn-sm"},"Go to DermDecide →")
       )
     ),
 

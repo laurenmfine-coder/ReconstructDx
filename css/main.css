@@ -947,3 +947,122 @@ html.fs-xlarge { font-size: 22px; }
   .home-footer-cta { margin:48px -16px -80px; padding:40px 16px; }
   .home-section-alt { margin:0 -16px; padding:40px 16px; }
 }
+
+/* ── CLICKABLE NAV STEPS ────────────────────────────────────────────── */
+.progress-step.clickable {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: color .2s, text-decoration-color .2s;
+}
+.progress-step.clickable:hover {
+  color: var(--teal);
+  text-decoration-color: var(--teal);
+}
+.progress-step.done {
+  color: var(--navy);
+}
+.progress-step.done.clickable:hover {
+  color: var(--teal);
+}
+
+/* ── RESOURCE CARDS ─────────────────────────────────────────────────── */
+.resource-intro {
+  font-size: 13px; color: var(--text-sub);
+  margin-bottom: 16px; line-height: 1.5;
+}
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.resource-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 8px;
+  transition: box-shadow .2s, border-color .2s;
+}
+.resource-card:hover {
+  border-color: var(--teal);
+  box-shadow: var(--shadow);
+}
+.resource-card-top {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.resource-type {
+  display: inline-block;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .05em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 99px;
+}
+.res-primary  { background: var(--teal-light); color: var(--teal); border: 1px solid var(--teal-mid); }
+.res-support  { background: #EEF0FB; color: #3B4DAA; border: 1px solid #C8CFF0; }
+.res-insurance{ background: #FFF7E6; color: #7A5C00; border: 1px solid #FFE0A0; }
+.res-findcare { background: var(--slate-light); color: var(--slate); border: 1px solid var(--border); }
+
+.resource-org {
+  font-size: 14px; font-weight: 700;
+  color: var(--navy); line-height: 1.3;
+}
+.resource-desc {
+  font-size: 13px; color: var(--text-sub);
+  line-height: 1.5; margin: 0; flex: 1;
+}
+.resource-link {
+  display: inline-block; margin-top: 6px;
+  font-size: 13px; font-weight: 600;
+  color: var(--teal); text-decoration: none;
+}
+.resource-link:hover { text-decoration: underline; color: var(--navy); }
+
+@media print {
+  .resources-grid { grid-template-columns: 1fr 1fr; }
+  .resource-link::after { content: " (" attr(href) ")"; font-size: 11px; color: var(--text-light); }
+}
+
+/* ── DERMDECIDE CROSSLINK BANNER ────────────────────────────────────── */
+.dermdecide-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #2C2340 0%, #6B5B6E 100%);
+  border-radius: var(--radius);
+  flex-wrap: wrap;
+}
+.dermdecide-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+}
+.dermdecide-icon { font-size: 24px; flex-shrink: 0; }
+.dermdecide-banner-left strong {
+  display: block;
+  color: white;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+.dermdecide-banner-left span {
+  color: rgba(255,255,255,.75);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.dermdecide-banner .btn-secondary {
+  background: rgba(255,255,255,.15);
+  color: white;
+  border-color: rgba(255,255,255,.3);
+  flex-shrink: 0;
+}
+.dermdecide-banner .btn-secondary:hover {
+  background: rgba(255,255,255,.25);
+  border-color: white;
+  transform: translateY(-1px);
+}
+@media (max-width: 600px) {
+  .dermdecide-banner { flex-direction: column; align-items: flex-start; }
+}
