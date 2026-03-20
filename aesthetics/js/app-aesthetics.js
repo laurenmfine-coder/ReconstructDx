@@ -131,11 +131,15 @@ function feedbackBar() {
 }
 
 function statCard(number,label,sub) {
-  return div("stat-card",
+  const children = [
     el("span",{class:"stat-number"},number),
-    el("span",{class:"stat-label"},label),
-    sub?el("span",{class:"stat-sub"},sub):null
-  );
+    el("span",{class:"stat-label"},label)
+  ];
+  if (sub) children.push(el("span",{class:"stat-sub"},sub));
+  const card = document.createElement("div");
+  card.className = "stat-card";
+  children.forEach(c => card.appendChild(c));
+  return card;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -207,7 +211,7 @@ function renderHome() {
       )
     ),
 
-    div("home-section",{id:"provider-section"},
+    el("div",{class:"home-section",id:"provider-section"},
       eyebrow("For dermatology providers"),
       el("h2",{class:"home-section-title"},"A pre-consultation decision support tool"),
       el("p",{class:"home-section-body"},
