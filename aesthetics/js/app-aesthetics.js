@@ -198,8 +198,24 @@ function renderHome() {
     div("home-section home-section-alt",
       eyebrow("Current guides"),
       el("h2",{class:"home-section-title"},"What would you like to learn about?"),
+
+      el("p",{class:"track-label"},"✨ Aesthetic treatments"),
       div("concern-grid",
-        ...AES.modules.map(mod => {
+        ...AES.modules.filter(m=>m.category!=="condition").map(mod => {
+          const card = div("concern-card",
+            el("span",{class:"concern-icon"},mod.icon),
+            el("h3",{},mod.concern),
+            el("p",{},mod.subtitle)
+          );
+          card.addEventListener("click",()=>{ AState.selectedModule=mod; goTo(0); });
+          return card;
+        })
+      ),
+
+      el("p",{class:"track-label",style:"margin-top:28px"},"🩺 Skin conditions"),
+      el("p",{class:"track-note"},"All skin conditions affect how we look and feel. These guides help you understand your treatment options — including newer therapies many patients don't know about."),
+      div("concern-grid",
+        ...AES.modules.filter(m=>m.category==="condition").map(mod => {
           const card = div("concern-card",
             el("span",{class:"concern-icon"},mod.icon),
             el("h3",{},mod.concern),
@@ -300,19 +316,27 @@ function renderConcernSelect() {
     el("p",{class:"screen-subtitle"},
       "Choose the concern or treatment area you want to learn about. Each guide covers all of your options in plain language."
     ),
+    el("p",{class:"track-label"},"✨ Aesthetic treatments"),
     div("concern-grid",
-      ...AES.modules.map(mod => {
+      ...AES.modules.filter(m=>m.category!=="condition").map(mod => {
         const card = div("concern-card"+(AState.selectedModule?.id===mod.id?" selected":""),
           el("span",{class:"concern-icon"},mod.icon),
           el("h3",{},mod.concern),
           el("p",{},mod.subtitle)
         );
-        card.addEventListener("click",()=>{
-          AState.selectedModule=mod;
-          AState.valueRatings={};
-          AState.topValues=[];
-          renderStep(1);
-        });
+        card.addEventListener("click",()=>{ AState.selectedModule=mod; AState.valueRatings={}; AState.topValues=[]; renderStep(1); });
+        return card;
+      })
+    ),
+    el("p",{class:"track-label",style:"margin-top:20px"},"🩺 Skin conditions"),
+    div("concern-grid",
+      ...AES.modules.filter(m=>m.category==="condition").map(mod => {
+        const card = div("concern-card"+(AState.selectedModule?.id===mod.id?" selected":""),
+          el("span",{class:"concern-icon"},mod.icon),
+          el("h3",{},mod.concern),
+          el("p",{},mod.subtitle)
+        );
+        card.addEventListener("click",()=>{ AState.selectedModule=mod; AState.valueRatings={}; AState.topValues=[]; renderStep(1); });
         return card;
       })
     ),
